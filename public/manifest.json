@@ -1,0 +1,25 @@
+{
+  "manifest_version": 3,
+  "name": "Youtube Summary Extension",
+  "description": "유튜브 영상을 단락별로 요약해주는 확장 프로그램",
+  "version": "1.0.1",
+  "action": {
+    "default_popup": "index.html"
+  },
+  "background": {
+    "service_worker": "background.js",
+    "type": "module"
+  },
+  "content_scripts": [
+    {
+      "matches": ["https://www.youtube.com/*"],
+      "js": ["contentscript.js"],
+      "css": ["style.css"],
+      "all_frames": false
+    }
+  ],
+  "content_security_policy": {
+    "extension_pages": "script-src 'self'; object-src 'self'"
+  },
+  "permissions": ["storage", "activeTab", "scripting"]
+}
