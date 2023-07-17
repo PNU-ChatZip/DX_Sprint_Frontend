@@ -72,7 +72,12 @@
 }
 
 .ytp-chapter-bar {
+  height: 10px;
   box-sizing: border-box;
-  border-right: 5px solid yellow;
-  background-color: rgb(154, 166, 202);
+  border-left: 3px solid yellow;
+  background: transparent;
+  /* background-color: rgb(154, 166, 202); */
+}
+.ytp-chapter-bar:hover {
+  height: 20px;
 }
