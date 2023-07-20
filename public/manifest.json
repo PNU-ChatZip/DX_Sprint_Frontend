@@ -14,12 +14,12 @@
     {
       "matches": ["https://www.youtube.com/*"],
       "js": ["contentscript.js"],
-      "css": ["style.css"],
+      "css": ["root.css", "style.css"],
       "all_frames": false
     }
   ],
   "content_security_policy": {
     "extension_pages": "script-src 'self'; object-src 'self'"
   },
-  "permissions": ["storage", "activeTab", "scripting"]
+  "permissions": ["storage", "activeTab", "scripting", "tabs"]
 }

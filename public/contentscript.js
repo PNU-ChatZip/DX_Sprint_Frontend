@@ -1,12 +1,14 @@
 let preHref = "";
 let isDarkMode = false;
+let videoId = "";
 
-window.onload = async () => {
+window.onload = main;
+
+async function main() {
   if (window.location.hostname === "www.youtube.com") {
     // check dark mode
     isDarkMode = Boolean(document.querySelector("html").attributes.dark);
-    chrome.runtime.sendMessage(isDarkMode);
-
+    // chrome.runtime.sendMessage(isDarkMode);
     // chrome.runtime.sendMessage({ pageInfo: window.location.href });
     if (
       window.location.search !== "" &&
@@ -14,6 +16,7 @@ window.onload = async () => {
     ) {
       // chrome.runtime.sendMessage({ isPlaying: true });
       preHref = window.location.href;
+      videoId = window.location.search.split("?v=")[1];
       await insertSummary();
     }
 
@@ -28,7 +31,7 @@ window.onload = async () => {
 
     observer.observe(document.body, { childList: true, subtree: true });
   }
-};
+}
 
 async function insertSummary() {
   // document.querySelector(
@@ -44,64 +47,73 @@ async function insertSummary() {
       /*
        * @TODO: mutation을 통한 secondary-inner의 생성 확인
        */
-      const secondaryInner = document.getElementById("secondary-inner");
-      secondaryInner.insertBefore(
-        ytSummaryContainer,
-        secondaryInner.childNodes[0]
-      );
+      waitForElm("#secondary-inner").then(() => {
+        const secondaryInner = document.getElementById("secondary-inner");
+        secondaryInner.insertBefore(
+          ytSummaryContainer,
+          secondaryInner.childNodes[0]
+        );
+      });
+      // const secondaryInner = document.getElementById("secondary-inner");
+      // secondaryInner.insertBefore(
+      //   ytSummaryContainer,
+      //   secondaryInner.childNodes[0]
+      // );
     }
 
-    const container = document.getElementById("yt-script-container");
-    // container.innerText = transcript;
+    waitForElm("#yt-script-container").then(async () => {
+      const container = document.getElementById("yt-script-container");
+      // container.innerText = transcript;
 
-    const data = await (
-      await fetch("https://waterboom.iptime.org:1032/?videoId=2RU1_CXCPbw")
-    ).json();
+      const data = await (
+        await fetch("https://waterboom.iptime.org:1032/?videoId=2RU1_CXCPbw")
+      ).json();
 
-    // const data = [
-    //   {
-    //     time: "00:21",
-    //     text: "자막에서 데드풀이라는 캐릭터를 언급하며 캐릭터의 디자인과 표현을 칭찬합니다",
-    //   },
-    //   {
-    //     time: "02:47",
-    //     text: "화자는 흥분을 표현하며 프로페셔널의 완벽한 작품이라고 칭찬합니다",
-    //   },
-    //   {
-    //     time: "04:46",
-    //     text: "화자는 세 번째 줄에서 모든 걱정이 사라지고 공연의 완벽함을 칭찬하며 보여준 실력에 놀라움과 감탄을 표현하고 있습니다",
-    //   },
-    //   {
-    //     time: "07:19",
-    //     text: "이 영상은 미술계에서 흔히 볼 수 없는 고미나와 이세돌의 팬아트를 등장시켜 독특하고 신선한 컨셉을 선보이고 있습니다",
-    //   },
-    //   {
-    //     time: "09:30",
-    //     text: "화자는 곧 출시될 작품에 대한 기대감을 표현하며, 가는 곳마다 불을 마주치는 코난과 비슷한 캐릭터가 등장할 것임을 암시합니다",
-    //   },
-    //   {
-    //     time: "12:37",
-    //     text: "말레피센트는 해커 대회에서 우승하며 뛰어난 실력을 칭찬받습니다",
-    //   },
-    // ];
+      // const data = [
+      //   {
+      //     time: "00:21",
+      //     text: "자막에서 데드풀이라는 캐릭터를 언급하며 캐릭터의 디자인과 표현을 칭찬합니다",
+      //   },
+      //   {
+      //     time: "02:47",
+      //     text: "화자는 흥분을 표현하며 프로페셔널의 완벽한 작품이라고 칭찬합니다",
+      //   },
+      //   {
+      //     time: "04:46",
+      //     text: "화자는 세 번째 줄에서 모든 걱정이 사라지고 공연의 완벽함을 칭찬하며 보여준 실력에 놀라움과 감탄을 표현하고 있습니다",
+      //   },
+      //   {
+      //     time: "07:19",
+      //     text: "이 영상은 미술계에서 흔히 볼 수 없는 고미나와 이세돌의 팬아트를 등장시켜 독특하고 신선한 컨셉을 선보이고 있습니다",
+      //   },
+      //   {
+      //     time: "09:30",
+      //     text: "화자는 곧 출시될 작품에 대한 기대감을 표현하며, 가는 곳마다 불을 마주치는 코난과 비슷한 캐릭터가 등장할 것임을 암시합니다",
+      //   },
+      //   {
+      //     time: "12:37",
+      //     text: "말레피센트는 해커 대회에서 우승하며 뛰어난 실력을 칭찬받습니다",
+      //   },
+      // ];
 
-    const sections = await getSections(data);
-    chrome.runtime.sendMessage(sections);
-    sections.map((section) => {
-      container.appendChild(section);
-      const hr = document.createElement("hr");
-      container.appendChild(hr);
+      const sections = await getSections(data);
+      // chrome.runtime.sendMessage(sections);
+      sections.map((section) => {
+        container.appendChild(section);
+        const hr = document.createElement("hr");
+        container.appendChild(hr);
+      });
+
+      // 전체 영상을 %단위로 쪼갠 데이터
+      // const playerBarInfo = [10, 20, 10, 30, 10, 20];
+      // 예제 영상 길이 = 13:18
+      // https://www.youtube.com/watch?v=tvI18HF3aaM
+      const playerBarInfo = getPlayerBarInfo(
+        data,
+        document.querySelector("video").duration
+      );
+      await insertPlayerBar(playerBarInfo);
     });
-
-    // 전체 영상을 %단위로 쪼갠 데이터
-    // const playerBarInfo = [10, 20, 10, 30, 10, 20];
-    // 예제 영상 길이 = 13:18
-    // https://www.youtube.com/watch?v=tvI18HF3aaM
-    const playerBarInfo = getPlayerBarInfo(
-      data,
-      document.querySelector("video").duration
-    );
-    await insertPlayerBar(playerBarInfo);
   }
 }
 
@@ -198,10 +210,14 @@ function makeSummaryContainer() {
   ytScriptBarBtn.id = "yt-script-bar-btn";
   ytScriptBarBtn.textContent = "X";
 
+  const ytScriptBarContent = document.createElement("span");
+  ytScriptBarContent.textContent = "YOUTUBE SUMMARY";
+
   const ytScriptContainer = document.createElement("div");
   ytScriptContainer.id = "yt-script-container";
 
   ytScriptBar.appendChild(ytScriptBarBtn);
+  ytScriptBar.appendChild(ytScriptBarContent);
   ytSummaryContainer.appendChild(ytScriptBar);
   ytSummaryContainer.appendChild(ytScriptContainer);
 
@@ -213,10 +229,20 @@ async function getSections(data) {
   chrome.runtime.sendMessage(data);
   for (let i = 0; i < data.length; i++) {
     const section = document.createElement("section");
+    const videoMoveBtn = document.createElement("button");
+    const sectionText = document.createElement("span");
     const timeData = data[i].time.split(":").map((t) => parseInt(t));
     const currentTime = timeData[0] * 60 + timeData[1];
     // section.innerHTML = `${data[i].time} | ${data[i].text}`;
-    section.innerHTML = `<a class="yt-core-attributed-string__link yt-core-attributed-string__link--display-type yt-core-attributed-string__link--call-to-action-color" tabindex="0" href="/watch?v=aD73tXB0vYA&amp;t=${currentTime}s" rel="nofollow" target="" force-new-state="true">${data[i].time}</a> | ${data[i].text}`;
+    // section.innerHTML = `<a class="yt-core-attributed-string__link yt-core-attributed-string__link--display-type yt-core-attributed-string__link--call-to-action-color" tabindex="0" href="/watch?v=aD73tXB0vYA&t=${currentTime}s" rel="nofollow" target="" force-new-state="true">${data[i].time}</a> | ${data[i].text}`;
+    videoMoveBtn.className = "videoMoveBtn";
+    videoMoveBtn.onclick = () => {
+      document.querySelector("video").currentTime = currentTime;
+    };
+    videoMoveBtn.innerText = `${data[i].time}`;
+    sectionText.textContent = `${data[i].text}`;
+    section.appendChild(videoMoveBtn);
+    section.appendChild(sectionText);
     sections.push(section);
   }
   return sections;
@@ -270,4 +296,24 @@ async function getTranscript() {
   //   .catch((e) => chrome.runtime.sendMessage({ err: e }));
 
   return transcriptWithTimeStamp;
+}
+
+function waitForElm(selector) {
+  return new Promise((resolve) => {
+    if (document.querySelector(selector)) {
+      return resolve(document.querySelector(selector));
+    }
+
+    const observer = new MutationObserver((mutations) => {
+      if (document.querySelector(selector)) {
+        resolve(document.querySelector(selector));
+        observer.disconnect();
+      }
+    });
+
+    observer.observe(document.body, {
+      childList: true,
+      subtree: true,
+    });
+  });
 }

@@ -1,3 +1,5 @@
+@import "./root.css";
+
 #yt-summary-extension-container {
   height: 400px;
   width: 400px;
@@ -5,70 +7,94 @@
 
 #yt-script-bar {
   display: flex;
-  justify-content: end;
+  justify-content: start;
   align-items: center;
   height: 50px;
   width: 410px;
-  background-color: rgb(154, 166, 202);
-  border-top-right-radius: 10px;
-  border-top-left-radius: 10px;
+  background-color: var(--color-black);
+  border: 1px solid var(--color-white);
+  color: var(--color-white);
+}
+
+#yt-script-bar span {
+  font-size: large;
+  margin-left: 20px;
 }
 
 #yt-script-bar-btn {
+  position: absolute;
+  right: 15px;
   height: 50px;
   width: 50px;
   margin-right: 10px;
   font-size: large;
   font-weight: 800;
-  color: white;
-  background-color: rgb(154, 166, 202);
+  color: var(--color-white);
+  background-color: var(--color-black);
   border: none;
 }
 #yt-script-bar-btn:hover {
-  color: black;
+  color: var(--color-grey);
 }
 
 #yt-script-container {
-  height: 300px;
+  height: 320px;
   width: 100%;
-  background-color: whitesmoke;
-  border-bottom-right-radius: 10px;
-  border-bottom-left-radius: 10px;
+  border: 1px solid var(--color-white);
+  background-color: var(--color-black);
   font-size: 12px;
   padding: 10px 5px;
   overflow-y: scroll;
 }
 #yt-script-container::-webkit-scrollbar {
   width: 10px;
-  border-radius: 10px;
   height: 100%;
 }
 #yt-script-container::-webkit-scrollbar-thumb {
-  background-color: rgb(154, 166, 202);
+  background-color: var(--color-white);
   height: 5vh;
-  border-radius: 10px;
 }
 #yt-script-container::-webkit-scrollbar-track {
-  background-color: whitesmoke;
+  background-color: var(--color-black);
   height: 100%;
-  border-top-right-radius: 10px;
-  border-bottom-right-radius: 10px;
 }
 
 #yt-script-container section {
+  display: flex;
+  width: 100%;
+  justify-content: space-around;
+  align-items: center;
   box-sizing: border-box;
+  color: var(--color-white);
+  border-right: 5px solid var(--color-black);
   padding: 10px 5px;
   font-size: 12px;
   font-weight: 500;
-  /* border-bottom: 1px solid rgb(154, 166, 202); */
+  /* border-bottom: 1px solid var(--color-main); */
 }
-#yt-script-container section:hover {
-  background-color: rgb(154, 166, 202, 0.3);
+
+#yt-script-container section span {
+  display: block;
+  width: 80%;
+}
+
+#yt-script-container section span:hover {
+  background-color: var(--color-grey);
   cursor: pointer;
 }
 
+#yt-script-container section button {
+  display: flex;
+  justify-content: center;
+  background-color: var(--color-black);
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  width: 10%;
+}
+
 #yt-script-container hr {
-  background-color: rgb(154, 166, 202);
+  background-color: var(--color-white);
 }
 
 .ytp-chapter-bar {
@@ -76,8 +102,14 @@
   box-sizing: border-box;
   border-left: 3px solid yellow;
   background: transparent;
-  /* background-color: rgb(154, 166, 202); */
+  /* background-color: var(--color-main); */
 }
 .ytp-chapter-bar:hover {
   height: 20px;
+}
+
+.videoMoveBtn {
+  border: none;
+  background-color: var(--color-white);
+  color: var(--color-blue);
 }
