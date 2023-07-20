@@ -1,14 +1,14 @@
-console.log("[Youtube Summary Extension] connected...");
+// console.log("[Youtube Summary Extension] connected...");
 
 chrome.runtime.onInstalled.addListener(() => {
-  console.log("extension installed");
+  // console.log("extension installed");
 });
 
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-  console.log(message);
+  // console.log(message);
   if (message.storage !== undefined) {
     chrome.storage.local.get(message.storage).then((data) => {
-      console.log(data.username);
+      // console.log(data.username);
       if (data.username) {
         sendResponse({ username: data.username });
       } else {
@@ -35,6 +35,14 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         if (json.login) sendResponse({ login: true });
         else sendResponse({ login: false });
       })
+      .catch((err) => console.log(err));
+    return true;
+  }
+
+  if (message.api !== undefined) {
+    fetch(message.api)
+      .then((res) => res.json())
+      .then((json) => sendResponse({ data: json }))
       .catch((err) => console.log(err));
     return true;
   }

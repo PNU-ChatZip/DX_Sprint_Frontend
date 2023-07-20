@@ -1,8 +1,9 @@
 @import "./root.css";
 
 #yt-summary-extension-container {
-  height: 400px;
+  /* height: 400px; */
   width: 400px;
+  margin-bottom: 10px;
 }
 
 #yt-script-bar {
@@ -21,6 +22,33 @@
   margin-left: 20px;
 }
 
+#yt-script-bar-icon {
+  background-color: var(--color-black);
+  border: 2px solid var(--color-white);
+  border-radius: 9999px;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: medium;
+  margin-left: 10px;
+}
+
+#yt-script-bar-icon:hover {
+  cursor: pointer;
+}
+
+#yt-script-bar-icon-tooltip {
+  background-color: var(--color-black);
+  color: var(--color-white);
+  visibility: hidden;
+  position: absolute;
+  top: -10px;
+  border: 1px solid var(--color-white);
+  padding: 10px;
+}
+
 #yt-script-bar-btn {
   position: absolute;
   right: 15px;
@@ -33,12 +61,14 @@
   background-color: var(--color-black);
   border: none;
 }
-#yt-script-bar-btn:hover {
-  color: var(--color-grey);
+
+#yt-script-bar-btn svg {
+  fill: var(--color-white);
 }
 
 #yt-script-container {
-  height: 320px;
+  display: none;
+  height: 350px;
   width: 100%;
   border: 1px solid var(--color-white);
   background-color: var(--color-black);
@@ -78,10 +108,10 @@
   width: 80%;
 }
 
-#yt-script-container section span:hover {
+/* #yt-script-container section span:hover {
   background-color: var(--color-grey);
   cursor: pointer;
-}
+} */
 
 #yt-script-container section button {
   display: flex;
@@ -112,4 +142,36 @@
   border: none;
   background-color: var(--color-white);
   color: var(--color-blue);
+}
+
+.loader {
+  display: block;
+  z-index: 1;
+  width: 25px;
+  height: 25px;
+  margin: 0;
+  border: 10px solid var(--color-blue);
+  border-radius: 50%;
+  border-top: 10px solid var(--color-white);
+  -webkit-animation: spin 2s linear infinite;
+  animation: spin 2s linear infinite;
+  margin-left: 45%;
+}
+
+@-webkit-keyframes spin {
+  0% {
+    -webkit-transform: rotate(0deg);
+  }
+  100% {
+    -webkit-transform: rotate(360deg);
+  }
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }

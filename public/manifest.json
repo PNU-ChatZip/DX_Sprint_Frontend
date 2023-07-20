@@ -1,6 +1,6 @@
 {
   "manifest_version": 3,
-  "name": "Youtube Summary Extension",
+  "name": "YouTube Comprehension",
   "description": "유튜브 영상을 단락별로 요약해주는 확장 프로그램",
   "version": "1.0.1",
   "action": {
@@ -21,5 +21,5 @@
   "content_security_policy": {
     "extension_pages": "script-src 'self'; object-src 'self'"
   },
-  "permissions": ["storage", "activeTab", "scripting", "tabs"]
+  "permissions": ["scripting"]
 }
