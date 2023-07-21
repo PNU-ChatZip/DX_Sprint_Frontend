@@ -86,9 +86,13 @@ async function getSummaryApi() {
       chrome.runtime.sendMessage({ msg: "call api" });
       chrome.runtime.sendMessage({ msg: videoId });
       const languageCode = await getLanguageCode();
-      chrome.runtime.sendMessage({
-        msg: `http://49.50.160.55:1032/test/?videoId=${videoId}&inLang=${languageCode}&outLang=${userLang}`,
-      });
+      if (languageCode === "no language code") {
+        document.getElementById("yt-script-bar-icon").style.cssText =
+          "border: 2px solid red; color: red";
+        document.getElementById("yt-script-bar-btn").click();
+        videoId = "";
+        return;
+      }
       chrome.runtime.sendMessage(
         {
           // api: `http://49.50.160.55:1032/test/?videoId=${videoId}&inLang=${languageCode}&outLang=${userLang}`,
@@ -260,6 +264,8 @@ function makeSummaryContainer() {
   // icon 클릭 이벤트
   ytScriptBarIcon.addEventListener("mouseover", () => {
     ytSCriptBarIconTooltip.style.visibility = "visible";
+    document.getElementById("yt-script-bar-icon").style.cssText =
+      "border: 2px solid var(--color-white); var(--color-white)";
   });
 
   ytScriptBarIcon.addEventListener("mouseout", () => {
@@ -303,13 +309,18 @@ async function getSections(data) {
 }
 
 async function getLanguageCode() {
-  let data = await (await fetch(window.location.href)).text();
-  data = data
-    .split('"captions":')[1]
-    .split(',"videoDetails')[0]
-    .replace("\n", "");
-  data = JSON.parse(data);
-  return data["playerCaptionsTracklistRenderer"].captionTracks[0].languageCode;
+  try {
+    let data = await (await fetch(window.location.href)).text();
+    data = data
+      .split('"captions":')[1]
+      .split(',"videoDetails')[0]
+      .replace("\n", "");
+    data = JSON.parse(data);
+    return data["playerCaptionsTracklistRenderer"].captionTracks[0]
+      .languageCode;
+  } catch (err) {
+    return "no language code";
+  }
 }
 
 async function getTranscript() {
