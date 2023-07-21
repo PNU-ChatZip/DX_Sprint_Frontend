@@ -52,10 +52,13 @@ async function insertSummary() {
       const ytSummaryContainer = makeSummaryContainer();
       waitForElm("#secondary-inner").then(() => {
         const secondaryInner = document.getElementById("secondary-inner");
-        secondaryInner.insertBefore(
-          ytSummaryContainer,
-          secondaryInner.childNodes[0]
-        );
+        if (
+          secondaryInner.childNodes[0].id !== "yt-summary-extension-container"
+        )
+          secondaryInner.insertBefore(
+            ytSummaryContainer,
+            secondaryInner.childNodes[0]
+          );
       });
     }
   }
@@ -74,7 +77,9 @@ async function getSummaryApi() {
     const container = document.getElementById("yt-script-container");
     preVideoId = videoId;
     videoId = window.location.search.split("?v=")[1];
-    if (preVideoId === videoId) return;
+    if (preVideoId === videoId) {
+      return;
+    }
     container.innerHTML = "";
     const loader = document.createElement("div");
     loader.className = "loader";
