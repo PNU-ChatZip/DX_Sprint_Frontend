@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "YouTube Comprehension",
   "description": "유튜브 영상을 단락별로 요약해주는 확장 프로그램",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "action": {
     "default_popup": "index.html"
   },
