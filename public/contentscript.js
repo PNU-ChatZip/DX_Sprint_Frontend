@@ -37,6 +37,10 @@ async function main() {
         if (preHref !== document.location.href) {
           preHref = document.location.href;
           scriptOn = false;
+          const container = document.querySelector(".ytp-chapters-container");
+          if (container.childNodes[0].id === "custom-bar") {
+            container.removeChild(container.childNodes[0]);
+          }
           await insertSummary();
         }
       });
@@ -170,37 +174,37 @@ async function makePlayerBar(playerBarInfo) {
   const bars = [];
   playerBarInfo.map((info) => {
     const bar = document.createElement("div");
-    bar.className =
-      "ytp-chapter-hover-container ytp-exp-chapter-hover-container ytp-chapter-bar custom-bar";
+    // bar.className =
+    //   "ytp-chapter-hover-container ytp-exp-chapter-hover-container ytp-chapter-bar";
     bar.style.width = `${info}%`;
 
-    const barPadding = document.createElement("div");
-    barPadding.className = "ytp-progress-bar-padding";
-    bar.appendChild(barPadding);
-    const ytpProgressBar = document.createElement("div");
-    ytpProgressBar.className = "ytp-progress-list";
-    const progressElementInfo = [
-      {
-        className: "ytp-play-progress ytp-swatch-background-color",
-        style: "left: 0px; transform: scaleX(0);",
-      },
-      {
-        className: "ytp-progress-linear-live-buffer",
-        style: "left: 0px; transform: scaleX(0);",
-      },
-      {
-        className: "ytp-hover-progress ytp-hover-progress-light",
-        style: "left: 0px; transform: scaleX(0);",
-      },
-      { className: "ytp-ad-progress-list" },
-    ];
-    for (let i = 0; i < progressElementInfo.length; i++) {
-      const el = document.createElement("div");
-      el.className = progressElementInfo[i].className;
-      el.style.cssText = progressElementInfo[i].style;
-      ytpProgressBar.appendChild(el);
-    }
-    bar.appendChild(ytpProgressBar);
+    // const barPadding = document.createElement("div");
+    // barPadding.className = "ytp-progress-bar-padding";
+    // bar.appendChild(barPadding);
+    // const ytpProgressBar = document.createElement("div");
+    // ytpProgressBar.className = "ytp-progress-list";
+    // const progressElementInfo = [
+    //   {
+    //     className: "ytp-play-progress ytp-swatch-background-color",
+    //     style: "left: 0px; transform: scaleX(0);",
+    //   },
+    //   {
+    //     className: "ytp-progress-linear-live-buffer",
+    //     style: "left: 0px; transform: scaleX(0);",
+    //   },
+    //   {
+    //     className: "ytp-hover-progress ytp-hover-progress-light",
+    //     style: "left: 0px; transform: scaleX(0);",
+    //   },
+    //   { className: "ytp-ad-progress-list" },
+    // ];
+    // for (let i = 0; i < progressElementInfo.length; i++) {
+    //   const el = document.createElement("div");
+    //   el.className = progressElementInfo[i].className;
+    //   el.style.cssText = progressElementInfo[i].style;
+    //   ytpProgressBar.appendChild(el);
+    // }
+    // bar.appendChild(ytpProgressBar);
     bars.push(bar);
   });
   return bars;
@@ -209,20 +213,22 @@ async function makePlayerBar(playerBarInfo) {
 async function insertPlayerBar(playerBarInfo) {
   const playerBars = makePlayerBar(playerBarInfo);
   const container = document.querySelector(".ytp-chapters-container");
-
+  const customBar = document.createElement("div");
+  customBar.id = "custom-bar";
   // !! 유튜브 기존 재생바 제거
   // while (container.childNodes[0]) {
   //   container.removeChild(container.childNodes[0]);
   // }
   // !!
 
-  while (container.childNodes[0].classList.contains("custom-bar")) {
+  if (container.childNodes[0].id === "custom-bar") {
     container.removeChild(container.childNodes[0]);
   }
 
   (await playerBars).reverse().forEach((playerBar) => {
-    container.insertBefore(playerBar, container.childNodes[0]);
+    customBar.insertBefore(playerBar, customBar.childNodes[0]);
   });
+  container.insertBefore(customBar, container.childNodes[0]);
 }
 
 function makeSummaryContainer() {

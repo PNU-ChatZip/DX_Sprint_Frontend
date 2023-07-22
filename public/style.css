@@ -18,7 +18,7 @@
 }
 
 #yt-script-bar span {
-  font-size: large;
+  font-size: x-large;
   margin-left: 20px;
 }
 
@@ -106,6 +106,7 @@
 #yt-script-container section span {
   display: block;
   width: 80%;
+  font-size: larger;
 }
 
 /* #yt-script-container section span:hover {
@@ -121,6 +122,7 @@
   margin: 0;
   padding: 0;
   width: 10%;
+  font-size: large;
 }
 
 #yt-script-container hr {
@@ -174,4 +176,20 @@
   100% {
     transform: rotate(360deg);
   }
+}
+
+#custom-bar {
+  display: flex;
+  height: 10px;
+  width: 100%;
+  position: absolute;
+  top: -3px;
+}
+
+#custom-bar div {
+  display: inline;
+  height: 10px;
+  box-sizing: border-box;
+  border-left: 3px solid yellow;
+  background: transparent;
 }
