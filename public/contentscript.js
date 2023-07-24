@@ -98,6 +98,11 @@ async function getSummaryApi() {
       chrome.runtime.sendMessage({ msg: videoId });
       const languageCode = await getLanguageCode();
       if (languageCode === "no language code") {
+        const ytScriptBarIconTooltip = document.getElementById(
+          "yt-script-bar-icon-tooltip"
+        );
+        ytScriptBarIconTooltip.textContent =
+          "자막 데이터가 없을 경우 요약이 불가능합니다.";
         document.getElementById("yt-script-bar-icon").style.cssText =
           "border: 2px solid red; color: red";
         document.getElementById("yt-script-bar-btn").click();
@@ -113,13 +118,21 @@ async function getSummaryApi() {
           const { data } = res;
           isLoad = true;
           if (data[0].text === "transcript failed") {
+            const ytScriptBarIconTooltip = document.getElementById(
+              "yt-script-bar-icon-tooltip"
+            );
+            ytScriptBarIconTooltip.textContent = "자막 데이터 로딩 실패";
             document.getElementById("yt-script-bar-icon").style.cssText =
               "border: 2px solid red; color: red";
             document.getElementById("yt-script-bar-btn").click();
             videoId = "";
           } else if (data[0].text === "not login") {
+            const ytScriptBarIconTooltip = document.getElementById(
+              "yt-script-bar-icon-tooltip"
+            );
+            ytScriptBarIconTooltip.textContent = "로그인 후 사용 가능합니다.";
             document.getElementById("yt-script-bar-icon").style.cssText =
-              "border: 2px solid red; color: red";
+              "border: 2px solid yellow; color: yellow";
             document.getElementById("yt-script-bar-btn").click();
             videoId = "";
           } else {
@@ -277,21 +290,21 @@ function makeSummaryContainer() {
   ytScriptBarIcon.id = "yt-script-bar-icon";
   ytScriptBarIcon.innerHTML = "i";
 
-  const ytSCriptBarIconTooltip = document.createElement("div");
-  ytSCriptBarIconTooltip.id = "yt-script-bar-icon-tooltip";
-  ytSCriptBarIconTooltip.textContent =
+  const ytScriptBarIconTooltip = document.createElement("div");
+  ytScriptBarIconTooltip.id = "yt-script-bar-icon-tooltip";
+  ytScriptBarIconTooltip.textContent =
     "자막 데이터가 없을 경우 요약이 불가능합니다.";
-  ytScriptBarIcon.appendChild(ytSCriptBarIconTooltip);
+  ytScriptBarIcon.appendChild(ytScriptBarIconTooltip);
 
   // icon 클릭 이벤트
   ytScriptBarIcon.addEventListener("mouseover", () => {
-    ytSCriptBarIconTooltip.style.visibility = "visible";
+    ytScriptBarIconTooltip.style.visibility = "visible";
     document.getElementById("yt-script-bar-icon").style.cssText =
       "border: 2px solid var(--color-white); var(--color-white)";
   });
 
   ytScriptBarIcon.addEventListener("mouseout", () => {
-    ytSCriptBarIconTooltip.style.visibility = "hidden";
+    ytScriptBarIconTooltip.style.visibility = "hidden";
   });
   //
 
