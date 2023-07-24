@@ -1,6 +1,7 @@
 .App {
+  margin: 0;
+  padding: 0;
   box-sizing: border-box;
-  border: 1px solid black;
-  height: 400px;
+  height: 550px;
   width: 400px;
 }
