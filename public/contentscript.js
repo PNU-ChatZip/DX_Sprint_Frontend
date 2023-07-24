@@ -10,6 +10,8 @@ let scriptOn = false;
 
 window.onload = main;
 
+// window.onload = main;
+
 async function main() {
   if (window.location.hostname === "www.youtube.com") {
     // check dark mode
@@ -105,7 +107,7 @@ async function getSummaryApi() {
       chrome.runtime.sendMessage(
         {
           // api: `http://49.50.160.55:1032/test/?videoId=${videoId}&inLang=${languageCode}&outLang=${userLang}`,
-          api: `http://49.50.160.55:1032/?videoId=${videoId}&inLang=${languageCode}&outLang=${userLang}`,
+          api: `/?videoId=${videoId}&inLang=${languageCode}&outLang=${userLang}`,
         },
         async (res) => {
           const { data } = res;
@@ -114,6 +116,12 @@ async function getSummaryApi() {
             document.getElementById("yt-script-bar-icon").style.cssText =
               "border: 2px solid red; color: red";
             document.getElementById("yt-script-bar-btn").click();
+            videoId = "";
+          } else if (data[0].text === "not login") {
+            document.getElementById("yt-script-bar-icon").style.cssText =
+              "border: 2px solid red; color: red";
+            document.getElementById("yt-script-bar-btn").click();
+            videoId = "";
           } else {
             const sections = await getSections(data);
             // loader.style.display = "none";
@@ -149,7 +157,10 @@ function getPlayerBarInfo(data, totalVideoPlaytime) {
   let preInfo = 0;
   for (let i = 0; i < data.length; i++) {
     const timeData = data[i].time.split(":").map((t) => parseInt(t));
-    nowInfo = ((timeData[0] * 60 + timeData[1]) / totalVideoPlaytime) * 100;
+    nowInfo =
+      ((timeData[0] * 3600 + timeData[1] * 60 + timeData[0]) /
+        totalVideoPlaytime) *
+      100;
     playerBarInfo.push(nowInfo - preInfo);
     preInfo = nowInfo;
   }
@@ -305,7 +316,7 @@ async function getSections(data) {
     const videoMoveBtn = document.createElement("button");
     const sectionText = document.createElement("span");
     const timeData = data[i].time.split(":").map((t) => parseInt(t));
-    const currentTime = timeData[0] * 60 + timeData[1];
+    const currentTime = timeData[0] * 3600 + timeData[1] * 60 + timeData[0];
     videoMoveBtn.className = "videoMoveBtn";
     videoMoveBtn.onclick = () => {
       document.querySelector("video").currentTime = currentTime;
