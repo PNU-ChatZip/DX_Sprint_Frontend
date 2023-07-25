@@ -40,7 +40,10 @@ async function main() {
           preHref = document.location.href;
           scriptOn = false;
           const container = document.querySelector(".ytp-chapters-container");
-          if (container.childNodes[0].id === "custom-bar") {
+          if (
+            container.childNodes[0] !== null &&
+            container.childNodes[0].id === "custom-bar"
+          ) {
             container.removeChild(container.childNodes[0]);
           }
           await insertSummary();

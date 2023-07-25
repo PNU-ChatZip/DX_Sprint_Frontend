@@ -1,7 +1,63 @@
+body {
+  margin: 0;
+  padding: 0;
+}
+
 .App {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
   height: 550px;
   width: 400px;
+  border: 1px solid black;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  align-items: center;
+}
+
+#title {
+  text-align: center;
+  font-size: x-large;
+  font-weight: 600;
+}
+
+#profile {
+  height: 100px;
+  width: 300px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-end;
+}
+
+#profileName {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+}
+
+#profileImg {
+  height: 50px;
+  width: 50px;
+}
+
+#loginBtn {
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0;
+}
+
+.card {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100px;
+  width: 300px;
+  border: 5px solid black;
+  background-color: rgba(0, 0, 0, 0.1);
+  border-radius: 25px;
+  font-weight: 800;
 }

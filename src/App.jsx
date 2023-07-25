@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import GoogleIcon from "./assets/googleIcon/1x/btn_google_signin_light_normal_web.png";
 import "./App.css";
 
 export default function App() {
@@ -32,21 +33,22 @@ export default function App() {
   }, []);
 
   return (
-    <div class="App">
-      <div>YouTube Comprehension</div>
+    <div className="App">
+      <div id="title">YouTube Comprehension</div>
       {isLogin ? (
         <>
-          <img src={userData.picture} /> | {userData.email}
-          <div>token: {token}</div>
-          <button
-            onClick={() => {
-              logout();
-            }}>
-            로그아웃
-          </button>
+          <div id="profile">
+            <div id="profileName">
+              <img id="profileImg" src={userData.picture} />
+              <span>{userData.email}</span>
+            </div>
+            <button onClick={logout}>로그아웃</button>
+          </div>
+          <div className="card">Free (적용 중)</div>
         </>
       ) : (
         <button
+          id="loginBtn"
           onClick={() => {
             chrome.runtime.sendMessage({ login: true }, (res) => {
               if (res.data.login) {
@@ -54,7 +56,7 @@ export default function App() {
               }
             });
           }}>
-          구글 로그인
+          <img src={GoogleIcon} />
         </button>
       )}
     </div>
