@@ -176,16 +176,21 @@ async function getSummaryApi() {
   });
 }
 
+const StringToTime = (timeString) => {
+  const part = Array.from(timeString.split(":"));
+  return part
+    .reverse()
+    .map((time, index) => parseInt(time) * 60 ** index)
+    .reduce((a, b) => a + b, 0);
+};
+
 // totalVideoPlaytime : second(초)
 function getPlayerBarInfo(data, totalVideoPlaytime) {
   const playerBarInfo = [];
   let preInfo = 0;
   for (let i = 0; i < data.length; i++) {
-    const timeData = data[i].time.split(":").map((t) => parseInt(t));
-    nowInfo =
-      ((timeData[0] * 3600 + timeData[1] * 60 + timeData[0]) /
-        totalVideoPlaytime) *
-      100;
+    const timeData = StringToTime(data[i].time);
+    nowInfo = (timeData / totalVideoPlaytime) * 100;
     playerBarInfo.push(nowInfo - preInfo);
     preInfo = nowInfo;
   }
@@ -340,8 +345,7 @@ async function getSections(data) {
     const section = document.createElement("section");
     const videoMoveBtn = document.createElement("button");
     const sectionText = document.createElement("span");
-    const timeData = data[i].time.split(":").map((t) => parseInt(t));
-    const currentTime = timeData[0] * 3600 + timeData[1] * 60 + timeData[0];
+    const currentTime = StringToTime(data[i].time);
     videoMoveBtn.className = "videoMoveBtn";
     videoMoveBtn.onclick = () => {
       document.querySelector("video").currentTime = currentTime;

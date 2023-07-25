@@ -41,17 +41,16 @@ export default function App() {
             </div>
             <button onClick={logout}>로그아웃</button>
           </div>
-          <div className="card">
-            Free (적용 중) [남은 api 호출 횟수 : {userData.apiAttempt}]
-            <button
-              onClick={() => {
-                chrome.runtime.sendMessage({ reload: true }, (res) => {
-                  getUserData();
-                });
-              }}>
-              새로고침
-            </button>
-          </div>
+          <div className="card">Free (적용 중)</div>
+          [남은 api 호출 횟수 : {userData.apiAttempt}]
+          <button
+            onClick={() => {
+              chrome.runtime.sendMessage({ reload: true }, (res) => {
+                getUserData();
+              });
+            }}>
+            새로고침
+          </button>
         </>
       ) : (
         <button
