@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "YouTube Comprehension",
   "description": "유튜브 영상을 단락별로 요약해주는 확장 프로그램",
-  "version": "1.0.2",
+  "version": "1.1.0",
   "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAqB3UmSiMC3gqjMJeXX/xaSFgY7jSFr3oeiucC60NXKdoxaKZFA2Zf0YSPVIEpdv12lsJGW90rL6NGFWWsflgVVVyHt9YwJsduEennRZM4RYH027N/UMi3rvjgfnAph4rbOJ2qC/Gn41oKl51nsZH0F1OKOa8FhzQ9iuiQtNxHtCkdjnvt/4Rp5tBHO7H24fs0SuqwvT7bQqwcmWI02pFBOMYF0xP4RSIRVKJCR3//ht9L3eA+rjwYTE0lZrXmHPgo3xeDPvumLv06Hvl/OEKkBFIoXdYN4b2bIFqHEhnEoYAU0l5nnPmfjTO4N3rb40CMtMryNHgjDpT4PmaVDXXzwIDAQAB",
   "action": {
     "default_popup": "index.html"

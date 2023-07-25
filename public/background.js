@@ -5,11 +5,12 @@ let redirectUri = `https://${chrome.runtime.id}.chromiumapp.org/`;
 let nonce = Math.random().toString(36).substring(2, 15);
 let setScript = false;
 
-// const LOGIN_URL = "http://49.50.160.55:3000/auth/login";
-// const API_URL = "http://49.50.160.55:1032";
-const LOGIN_URL = "http://waterboom.iptime.org:1034/auth/login";
-const RELOAD_URL = "http://waterboom.iptime.org:1034/auth/apiAttempt";
-const API_URL = "http://waterboom.iptime.org:1032";
+const LOGIN_URL = "http://49.50.160.55:3000/auth/login";
+const RELOAD_URL = "http://49.50.160.55:3000/auth/apiAttempt";
+const API_URL = "http://49.50.160.55:1032";
+// const LOGIN_URL = "http://waterboom.iptime.org:1034/auth/login";
+// const RELOAD_URL = "http://waterboom.iptime.org:1034/auth/apiAttempt";
+// const API_URL = "http://waterboom.iptime.org:1032";
 // const LOGIN_URL = "http://localhost:3000/auth/login";
 // const RELOAD_URL = "http://localhost:3000/auth/apiAttempt";
 
@@ -72,7 +73,7 @@ const googleLogin = async (sendResponse) => {
             );
           })
           .catch((err) => {
-            console.log(err);
+            // console.log(err);
             sendResponse({
               data: {
                 login: false,
@@ -93,7 +94,7 @@ chrome.runtime.onInstalled.addListener(() => {
 });
 
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-  console.log(message);
+  // console.log(message);
   if (message.reload !== undefined) {
     chrome.storage.local.get("token", (data) => {
       fetch(RELOAD_URL, {
@@ -105,9 +106,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
       })
         .then((res) => res.json())
         .then((json) => {
-          console.log("reload token");
           chrome.storage.local.get("userData", (res) => {
-            console.log("reload userData", json);
             res.userData.apiAttempt = json.apiAttempt;
             chrome.storage.local.set({ userData: res.userData }, (r) => {
               sendResponse({ reload: true });
@@ -120,7 +119,6 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 
   if (message.storage !== undefined) {
     chrome.storage.local.get(message.storage, (data) => {
-      console.log(message.storage, data);
       if (!data) sendResponse({ data: "" });
       else sendResponse({ data });
     });
@@ -148,9 +146,6 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
             },
           })
             .then(async (response) => {
-              console.log(response);
-              console.log(response.ok);
-              console.log(response.status);
               if (!response.ok) {
                 if (response.status === 401) throw new Error("not login");
                 else if (response.status === 403)
@@ -160,11 +155,9 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
               return await response.json();
             })
             .then((json) => {
-              console.log(json);
               sendResponse({ data: json });
             })
             .catch((err) => {
-              console.log(err);
               sendResponse({ data: [{ text: err.message }] });
             });
         } else {
