@@ -138,6 +138,15 @@ async function getSummaryApi() {
               "border: 2px solid yellow; color: yellow";
             document.getElementById("yt-script-bar-btn").click();
             videoId = "";
+          } else if (data[0].text === "not apiAttempt") {
+            const ytScriptBarIconTooltip = document.getElementById(
+              "yt-script-bar-icon-tooltip"
+            );
+            ytScriptBarIconTooltip.textContent = "토큰 부족";
+            document.getElementById("yt-script-bar-icon").style.cssText =
+              "border: 2px solid red; color: red";
+            document.getElementById("yt-script-bar-btn").click();
+            videoId = "";
           } else {
             const sections = await getSections(data);
             // loader.style.display = "none";

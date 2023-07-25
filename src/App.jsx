@@ -5,13 +5,11 @@ import "./App.css";
 export default function App() {
   const [isLogin, setIsLogin] = useState(false);
   const [userData, setUserData] = useState({});
-  const [token, setToken] = useState();
 
   const getUserData = async () => {
     await chrome.runtime.sendMessage({ storage: "token" }, (res) => {
       if (res.data.token) {
         setIsLogin(true);
-        setToken(res.data.token);
         chrome.runtime.sendMessage({ storage: "userData" }, (res) => {
           setUserData(res.data.userData);
         });
@@ -25,7 +23,6 @@ export default function App() {
     chrome.runtime.sendMessage({ logout: true });
     setIsLogin(false);
     setUserData({});
-    setToken(null);
   };
 
   useEffect(() => {
@@ -44,7 +41,17 @@ export default function App() {
             </div>
             <button onClick={logout}>로그아웃</button>
           </div>
-          <div className="card">Free (적용 중)</div>
+          <div className="card">
+            Free (적용 중) [남은 api 호출 횟수 : {userData.apiAttempt}]
+            <button
+              onClick={() => {
+                chrome.runtime.sendMessage({ reload: true }, (res) => {
+                  getUserData();
+                });
+              }}>
+              새로고침
+            </button>
+          </div>
         </>
       ) : (
         <button

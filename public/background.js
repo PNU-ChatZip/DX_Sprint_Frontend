@@ -8,7 +8,10 @@ let setScript = false;
 // const LOGIN_URL = "http://49.50.160.55:3000/auth/login";
 // const API_URL = "http://49.50.160.55:1032";
 const LOGIN_URL = "http://waterboom.iptime.org:1034/auth/login";
+const RELOAD_URL = "http://waterboom.iptime.org:1034/auth/apiAttempt";
 const API_URL = "http://waterboom.iptime.org:1032";
+// const LOGIN_URL = "http://localhost:3000/auth/login";
+// const RELOAD_URL = "http://localhost:3000/auth/apiAttempt";
 
 const googleLogin = async (sendResponse) => {
   const authUrl = new URL("https://accounts.google.com/o/oauth2/v2/auth");
@@ -56,6 +59,7 @@ const googleLogin = async (sendResponse) => {
                 userData: {
                   picture: googleLoginToken.picture,
                   email: googleLoginToken.email,
+                  apiAttempt: json.apiAttempt,
                 },
               },
               (res) => {
@@ -90,6 +94,30 @@ chrome.runtime.onInstalled.addListener(() => {
 
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   console.log(message);
+  if (message.reload !== undefined) {
+    chrome.storage.local.get("token", (data) => {
+      fetch(RELOAD_URL, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: data.token,
+        },
+      })
+        .then((res) => res.json())
+        .then((json) => {
+          console.log("reload token");
+          chrome.storage.local.get("userData", (res) => {
+            console.log("reload userData", json);
+            res.userData.apiAttempt = json.apiAttempt;
+            chrome.storage.local.set({ userData: res.userData }, (r) => {
+              sendResponse({ reload: true });
+            });
+          });
+        });
+    });
+    return true;
+  }
+
   if (message.storage !== undefined) {
     chrome.storage.local.get(message.storage, (data) => {
       console.log(message.storage, data);
@@ -119,14 +147,25 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
               Authorization: res.token,
             },
           })
-            .then((res) => res.json())
+            .then(async (response) => {
+              console.log(response);
+              console.log(response.ok);
+              console.log(response.status);
+              if (!response.ok) {
+                if (response.status === 401) throw new Error("not login");
+                else if (response.status === 403)
+                  throw new Error("not apiAttempt");
+                else throw new Error("transcript failed"); // 406
+              }
+              return await response.json();
+            })
             .then((json) => {
               console.log(json);
               sendResponse({ data: json });
             })
             .catch((err) => {
               console.log(err);
-              sendResponse({ data: [{ text: "transcript failed" }] });
+              sendResponse({ data: [{ text: err.message }] });
             });
         } else {
           sendResponse({ data: [{ text: "not login" }] });
