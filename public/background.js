@@ -64,6 +64,7 @@ const googleLogin = async (sendResponse) => {
                 },
               },
               (res) => {
+                setScript = true;
                 sendResponse({
                   data: {
                     login: true,
