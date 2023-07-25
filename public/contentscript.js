@@ -13,6 +13,9 @@ window.onload = main;
 // window.onload = main;
 
 async function main() {
+  chrome.runtime.sendMessage({ storage: "token" }, (res) => {
+    if (res.data.token) chrome.runtime.sendMessage({ setScript: true });
+  });
   if (window.location.hostname === "www.youtube.com") {
     // check dark mode
     isDarkMode = Boolean(document.querySelector("html").attributes.dark);
