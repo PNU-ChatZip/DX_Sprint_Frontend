@@ -133,6 +133,7 @@ async function getSummaryApi() {
             document.getElementById("yt-script-bar-btn").click();
             videoId = "";
           } else if (data[0].text === "not login") {
+            chrome.runtime.sendMessage({ popup: true });
             const ytScriptBarIconTooltip = document.getElementById(
               "yt-script-bar-icon-tooltip"
             );

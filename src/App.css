@@ -4,12 +4,14 @@ body {
 }
 
 .App {
+  min-height: 550px;
+  min-width: 400px;
   margin: 0;
   padding: 0;
   box-sizing: border-box;
   height: 550px;
-  width: 400px;
-  border: 1px solid black;
+  /* width: 400px;
+  border: 1px solid black; */
   display: flex;
   flex-direction: column;
   justify-content: space-around;
