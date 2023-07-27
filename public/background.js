@@ -5,14 +5,14 @@ let redirectUri = `https://${chrome.runtime.id}.chromiumapp.org/`;
 let nonce = Math.random().toString(36).substring(2, 15);
 let setScript = false;
 
-// const LOGIN_URL = "http://49.50.160.55:3000/auth/login";
-// const RELOAD_URL = "http://49.50.160.55:3000/auth/apiAttempt";
-const API_URL = "http://49.50.160.55:1032";
+const LOGIN_URL = "http://49.50.160.55/auth/login";
+const RELOAD_URL = "http://49.50.160.55/auth/apiAttempt";
+const API_URL = "http://49.50.160.55/api";
 // const LOGIN_URL = "http://waterboom.iptime.org:1034/auth/login";
 // const RELOAD_URL = "http://waterboom.iptime.org:1034/auth/apiAttempt";
 // const API_URL = "http://waterboom.iptime.org:1032";
-const LOGIN_URL = "http://localhost:3000/auth/login";
-const RELOAD_URL = "http://localhost:3000/auth/apiAttempt";
+// const LOGIN_URL = "http://localhost:3000/auth/login";
+// const RELOAD_URL = "http://localhost:3000/auth/apiAttempt";
 
 const googleLogin = async (sendResponse) => {
   const authUrl = new URL("https://accounts.google.com/o/oauth2/v2/auth");
