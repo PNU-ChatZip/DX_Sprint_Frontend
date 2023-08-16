@@ -1,25 +1,32 @@
 import { useEffect, useState } from "react";
-import GoogleIcon from "./assets/googleIcon/1x/btn_google_signin_light_normal_web.png";
 import "./App.css";
+import Home from "./Home";
+import Login from "./Login";
+import Join from "./Join";
 
 export default function App() {
   const [isLogin, setIsLogin] = useState(false);
+  const [isJoin, setIsJoin] = useState(false);
   const [userData, setUserData] = useState({});
 
-  const getUserData = async () => {
-    await chrome.runtime.sendMessage({ storage: "token" }, (res) => {
-      if (res.data.token) {
+  const getUserData = () => {
+    chrome.runtime.sendMessage({ storage: "token" }, (token) => {
+      chrome.runtime.sendMessage({ msg: token });
+      if (token.value) {
         setIsLogin(true);
-        chrome.runtime.sendMessage({ storage: "userData" }, (res) => {
-          setUserData(res.data.userData);
-        });
-        chrome.runtime.sendMessage({ setScript: true });
+        chrome.runtime.sendMessage(
+          {
+            storage: "userData",
+          },
+          (res) => {
+            setUserData(res.value);
+          }
+        );
       }
     });
   };
 
   const logout = () => {
-    chrome.runtime.sendMessage({ setScript: false });
     chrome.runtime.sendMessage({ logout: true });
     setIsLogin(false);
     setUserData({});
@@ -32,47 +39,23 @@ export default function App() {
   return (
     <div className="App">
       <div id="title">YouTube Comprehension</div>
-      {isLogin ? (
+      {isJoin ? (
         <>
-          <div id="profile">
-            <div id="profileName">
-              <img id="profileImg" src={userData.picture} />
-              <span>{userData.email}</span>
-            </div>
-            <button onClick={logout}>로그아웃</button>
-          </div>
-          <div className="card">Free (적용 중)</div>
-          [남은 api 호출 횟수 : {userData.apiAttempt}]
-          <button
-            onClick={() => {
-              chrome.runtime.sendMessage({ reload: true }, (res) => {
-                getUserData();
-              });
-            }}>
-            새로고침
-          </button>
+          <Join setIsJoin={setIsJoin} />
         </>
       ) : (
-        <button
-          id="loginBtn"
-          onClick={() => {
-            chrome.runtime.sendMessage({ login: true }, (res) => {
-              if (res.data.login) {
-                getUserData();
-              }
-            });
-          }}>
-          <img src={GoogleIcon} />
-        </button>
+        <>
+          {isLogin ? (
+            <Home
+              userData={userData}
+              getUserData={getUserData}
+              logout={logout}
+            />
+          ) : (
+            <Login getUserData={getUserData} setIsJoin={setIsJoin} />
+          )}
+        </>
       )}
     </div>
   );
 }
-
-// export default function App() {
-//   return (
-//     <div class="App">
-//       <div>YouTube Comprehension</div>
-//     </div>
-//   );
-// }

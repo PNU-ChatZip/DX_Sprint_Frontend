@@ -1,12 +1,12 @@
 @import "./root.css";
 
-#yt-summary-extension-container {
+#script-view {
   /* height: 400px; */
   width: 400px;
   margin-bottom: 10px;
 }
 
-#yt-script-bar {
+#script-view-header {
   display: flex;
   justify-content: start;
   align-items: center;
@@ -17,12 +17,12 @@
   color: var(--color-white);
 }
 
-#yt-script-bar span {
+#script-view-header span {
   font-size: x-large;
   margin-left: 20px;
 }
 
-#yt-script-bar-icon {
+#script-view-header-info-icon {
   background-color: var(--color-black);
   border: 2px solid var(--color-white);
   border-radius: 9999px;
@@ -35,11 +35,11 @@
   margin-left: 10px;
 }
 
-#yt-script-bar-icon:hover {
+#script-view-header-info-icon:hover {
   cursor: pointer;
 }
 
-#yt-script-bar-icon-tooltip {
+#script-view-header-info-icon-text {
   background-color: var(--color-black);
   color: var(--color-white);
   visibility: hidden;
@@ -49,7 +49,7 @@
   padding: 10px;
 }
 
-#yt-script-bar-btn {
+#script-view-header-btn {
   position: absolute;
   right: 15px;
   height: 50px;
@@ -62,11 +62,11 @@
   border: none;
 }
 
-#yt-script-bar-btn svg {
+#script-view-header-btn svg {
   fill: var(--color-white);
 }
 
-#yt-script-container {
+#script-view-body {
   display: none;
   height: 350px;
   width: 100%;
@@ -76,20 +76,20 @@
   padding: 10px 5px;
   overflow-y: scroll;
 }
-#yt-script-container::-webkit-scrollbar {
+#script-view-body::-webkit-scrollbar {
   width: 10px;
   height: 100%;
 }
-#yt-script-container::-webkit-scrollbar-thumb {
+#script-view-body::-webkit-scrollbar-thumb {
   background-color: var(--color-white);
   height: 5vh;
 }
-#yt-script-container::-webkit-scrollbar-track {
+#script-view-body::-webkit-scrollbar-track {
   background-color: var(--color-black);
   height: 100%;
 }
 
-#yt-script-container section {
+#script-view-body section {
   display: flex;
   width: 100%;
   justify-content: space-around;
@@ -103,18 +103,18 @@
   /* border-bottom: 1px solid var(--color-main); */
 }
 
-#yt-script-container section span {
+#script-view-body section span {
   display: block;
   width: 80%;
   font-size: larger;
 }
 
-/* #yt-script-container section span:hover {
+/* #script-view-body section span:hover {
   background-color: var(--color-grey);
   cursor: pointer;
 } */
 
-#yt-script-container section button {
+#script-view-body section button {
   display: flex;
   justify-content: center;
   background-color: var(--color-black);
@@ -125,7 +125,7 @@
   font-size: medium;
 }
 
-#yt-script-container hr {
+#script-view-body hr {
   background-color: var(--color-white);
 }
 
@@ -140,13 +140,13 @@
   height: 20px;
 }
 
-.videoMoveBtn {
+.videoLink {
   border: none;
   background-color: var(--color-white);
   color: var(--color-blue);
 }
 
-.loader {
+#loader {
   display: block;
   z-index: 1;
   width: 25px;

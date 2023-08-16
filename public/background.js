@@ -1,49 +1,97 @@
-// console.log("[Youtube Summary Extension] connected...");
+class CustomError extends Error {
+  constructor(code, ...params) {
+    super(...params);
+    this.code = code;
+  }
+}
+
+// google login dataset
 let clientId =
   "766002842369-26jdfm69klqq8s3sv7gqkug1if20a7ei.apps.googleusercontent.com";
 let redirectUri = `https://${chrome.runtime.id}.chromiumapp.org/`;
 let nonce = Math.random().toString(36).substring(2, 15);
-let setScript = false;
 
-const LOGIN_URL = "http://49.50.160.55/auth/login";
-const RELOAD_URL = "http://49.50.160.55/auth/apiAttempt";
-const API_URL = "http://49.50.160.55/api";
-// const LOGIN_URL = "http://waterboom.iptime.org:1034/auth/login";
-// const RELOAD_URL = "http://waterboom.iptime.org:1034/auth/apiAttempt";
-// const API_URL = "http://waterboom.iptime.org:1032";
-// const LOGIN_URL = "http://localhost:3000/auth/login";
-// const RELOAD_URL = "http://localhost:3000/auth/apiAttempt";
+// api url
+const API_BASE_URL = "http://49.50.160.55";
 
-const googleLogin = async (sendResponse) => {
+chrome.runtime.onInstalled.addListener(() => {
+  chrome.storage.local.clear();
+});
+
+chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+  console.log(request);
+
+  if (request.storage !== undefined) {
+    getInStorage(request.storage).then((result) => sendResponse(result));
+    return true;
+  }
+
+  if (request.googleLogin !== undefined) {
+    googleLogin().then((result) => sendResponse(result));
+    return true;
+  }
+
+  if (request.logout !== undefined) {
+    chrome.storage.local.clear();
+    return;
+  }
+
+  if (request.api !== undefined) {
+    getApi(request.api).then((result) => sendResponse(result));
+    return true;
+  }
+
+  if (request.apiAttempt !== undefined) {
+    getApiAttempt().then((result) => sendResponse(result));
+    return true;
+  }
+
+  if (request.popup !== undefined) {
+    popupOpen();
+    return;
+  }
+});
+
+async function getInStorage(key) {
+  const data = await chrome.storage.local.get(key);
+  const value = data[key];
+  return { value };
+}
+
+async function setInStorage(object) {
+  await chrome.storage.local.set(object);
+  return;
+}
+
+async function googleLogin() {
   const authUrl = new URL("https://accounts.google.com/o/oauth2/v2/auth");
 
   authUrl.searchParams.set("client_id", clientId);
   authUrl.searchParams.set("response_type", "id_token");
   authUrl.searchParams.set("redirect_uri", redirectUri);
-  // Add the OpenID scope. Scopes allow you to access the user’s information.
   authUrl.searchParams.set("scope", "openid profile email");
   authUrl.searchParams.set("nonce", nonce);
-  // Show the consent screen after login.
   authUrl.searchParams.set("prompt", "consent");
 
-  chrome.identity.launchWebAuthFlow(
-    {
-      url: authUrl.href,
-      interactive: true,
-    },
-    (redirectUrl) => {
-      if (redirectUrl) {
-        // The ID token is in the URL hash
-        const urlHash = redirectUrl.split("#")[1];
-        const params = new URLSearchParams(urlHash);
-        const jwt = params.get("id_token");
+  const redirectUrl = await chrome.identity.launchWebAuthFlow({
+    url: authUrl.href,
+    interactive: true,
+  });
 
-        // Parse the JSON Web Token
-        const base64Url = jwt.split(".")[1];
-        const base64 = base64Url.replace("-", "+").replace("_", "/");
-        const googleLoginToken = JSON.parse(atob(base64));
+  if (redirectUrl) {
+    // The ID token is in the URL hash
+    const urlHash = redirectUrl.split("#")[1];
+    const params = new URLSearchParams(urlHash);
+    const jwt = params.get("id_token");
 
-        fetch(LOGIN_URL, {
+    // Parse the JSON Web Token
+    const base64Url = jwt.split(".")[1];
+    const base64 = base64Url.replace("-", "+").replace("_", "/");
+    const googleLoginToken = JSON.parse(atob(base64));
+
+    try {
+      const json = await (
+        await fetch(API_BASE_URL + "/auth/login", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -52,136 +100,104 @@ const googleLogin = async (sendResponse) => {
             email: googleLoginToken.email,
           }),
         })
-          .then((res) => res.json())
-          .then((json) => {
-            chrome.storage.local.set(
-              {
-                token: json.token,
-                userData: {
-                  picture: googleLoginToken.picture,
-                  email: googleLoginToken.email,
-                  apiAttempt: json.apiAttempt,
-                },
-              },
-              (res) => {
-                setScript = true;
-                sendResponse({
-                  data: {
-                    login: true,
-                  },
-                });
-              }
-            );
-          })
-          .catch((err) => {
-            // console.log(err);
-            sendResponse({
-              data: {
-                login: false,
-              },
-            });
-          });
-        return true;
-      }
-      sendResponse({ data: { login: false } });
+      ).json();
+
+      await setInStorage({
+        token: json.token,
+        userData: {
+          picture: googleLoginToken.picture,
+          email: googleLoginToken.email,
+          apiAttempt: json.apiAttempt,
+        },
+      });
+
+      return { login: true };
+    } catch (err) {
+      return { login: false };
     }
-  );
-  return true;
-};
+  }
 
-chrome.runtime.onInstalled.addListener(() => {
-  // console.log("extension installed");
-  chrome.storage.local.clear();
-});
+  return { login: false };
+}
 
-chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-  // console.log(message);
-  if (message.reload !== undefined) {
-    chrome.storage.local.get("token", (data) => {
-      fetch(RELOAD_URL, {
+async function getApi(videoData) {
+  try {
+    const { videoId, inLang, outLang } = videoData;
+    const token = await (await getInStorage("token")).value;
+
+    if (!token) throw new CustomError(401);
+
+    const response = await fetch(
+      API_BASE_URL +
+        `/api/?videoId=${videoId}&inLang=${inLang}&outLang=${outLang}`,
+      {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
-          Authorization: data.token,
+          Authorization: token,
         },
-      })
-        .then((res) => res.json())
-        .then((json) => {
-          chrome.storage.local.get("userData", (res) => {
-            res.userData.apiAttempt = json.apiAttempt;
-            chrome.storage.local.set({ userData: res.userData }, (r) => {
-              sendResponse({ reload: true });
-            });
-          });
-        });
-    });
-    return true;
-  }
+      }
+    );
 
-  if (message.storage !== undefined) {
-    chrome.storage.local.get(message.storage, (data) => {
-      if (!data) sendResponse({ data: "" });
-      else sendResponse({ data });
-    });
-    return true;
-  }
-
-  if (message.login !== undefined) {
-    googleLogin(sendResponse);
-    return true;
-  }
-
-  if (message.logout !== undefined) {
-    chrome.storage.local.clear();
-  }
-
-  if (message.api !== undefined) {
-    if (setScript) {
-      chrome.storage.local.get("token", (res) => {
-        if (res.token) {
-          fetch(API_URL + message.api, {
-            method: "GET",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: res.token,
-            },
-          })
-            .then(async (response) => {
-              if (!response.ok) {
-                if (response.status === 401) throw new Error("not login");
-                else if (response.status === 403)
-                  throw new Error("not apiAttempt");
-                else throw new Error("transcript failed"); // 406
-              }
-              return await response.json();
-            })
-            .then((json) => {
-              sendResponse({ data: json });
-            })
-            .catch((err) => {
-              sendResponse({ data: [{ text: err.message }] });
-            });
-        } else {
-          sendResponse({ data: [{ text: "not login" }] });
-        }
-      });
-    } else {
-      sendResponse({ data: [{ text: "not login" }] });
+    if (!response.ok) {
+      throw new CustomError(response.status);
     }
 
-    return true;
-  }
+    const json = await response.json();
 
-  if (message.setScript !== undefined) {
-    setScript = message.setScript;
+    return { code: 200, msg: "", data: json };
+  } catch (err) {
+    return errorData(err);
   }
+}
 
-  if (message.popup !== undefined) {
-    chrome.windows.create({
-      url: "index.html",
-      type: "popup",
-      width: 500,
-      height: 600,
+async function getApiAttempt() {
+  try {
+    const token = (await getInStorage("token")).value;
+
+    if (!token) throw new CustomError(401);
+
+    const response = await fetch(API_BASE_URL + "/auth/apiAttempt", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: token,
+      },
     });
+
+    if (!response.ok) {
+      throw new CustomError(response.status);
+    }
+
+    const json = await response.json();
+    const userData = (await getInStorage("userData")).value;
+    userData.apiAttempt = json.apiAttempt;
+    await setInStorage({ userData });
+
+    return { code: 200, msg: "", data: json };
+  } catch (err) {
+    return errorData(err);
   }
-});
+}
+
+function popupOpen() {
+  chrome.windows.create({
+    url: "index.html",
+    type: "popup",
+    width: 500,
+    height: 600,
+  });
+}
+
+function errorData(err) {
+  let code = 500;
+  let msg = "Unknown Error";
+  if (err instanceof CustomError) {
+    code = err.code;
+
+    if (code === 401) msg = "Not Login";
+    if (code === 403) msg = "No ApiAttempt";
+  }
+
+  return { code, msg, data: [] };
+}
