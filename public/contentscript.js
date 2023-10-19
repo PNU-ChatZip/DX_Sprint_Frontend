@@ -188,9 +188,30 @@ async function insertSummary() {
   const scriptViewBody = await waitForElm("#script-view-body");
   scriptViewBody.innerHTML = "";
 
-  const loader = document.createElement("div");
-  loader.id = "loader";
-  scriptViewBody.append(loader);
+  const loaderContainer = document.createElement("div");
+  loaderContainer.id = "loader-container";
+
+  const loaderSpinner = document.createElement("div");
+  loaderSpinner.className = "loader-spinner";
+
+  for (let i = 0; i < 12; ++i) {
+    const loaderSpinnerItem = document.createElement("div");
+    loaderSpinnerItem.className = "loader-spinner-item";
+    loaderSpinner.appendChild(loaderSpinnerItem);
+  }
+
+  const loaderComment = document.createElement("div");
+  loaderComment.className = "loader-comment";
+
+  const loaderCommentText = document.createElement("span");
+  loaderCommentText.textContent = "Wating for 10s ~ 1m.";
+
+  loaderComment.appendChild(loaderCommentText);
+  loaderContainer.appendChild(loaderSpinner);
+  loaderContainer.appendChild(loaderComment);
+
+  scriptViewBody.append(loaderContainer);
+  //
 
   const summary = await getSummary();
   if (summary.length !== 0) {
@@ -201,7 +222,7 @@ async function insertSummary() {
     errorHandler();
   }
 
-  waitForElm("#loader").then((el) => el.remove());
+  waitForElm("#loader-container").then((el) => el.remove());
 }
 
 async function getSummary() {
