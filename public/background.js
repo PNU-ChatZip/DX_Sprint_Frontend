@@ -19,8 +19,6 @@ chrome.runtime.onInstalled.addListener(() => {
 });
 
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-  console.log(request);
-
   if (request.storage !== undefined) {
     getInStorage(request.storage).then((result) => sendResponse(result));
     return true;

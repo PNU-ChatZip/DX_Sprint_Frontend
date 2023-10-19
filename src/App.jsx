@@ -2,11 +2,9 @@ import { useEffect, useState } from "react";
 import "./App.css";
 import Home from "./Home";
 import Login from "./Login";
-import Join from "./Join";
 
 export default function App() {
   const [isLogin, setIsLogin] = useState(false);
-  const [isJoin, setIsJoin] = useState(false);
   const [userData, setUserData] = useState({});
 
   const getUserData = () => {
@@ -39,22 +37,10 @@ export default function App() {
   return (
     <div className="App">
       <div id="title">YouTube Comprehension</div>
-      {isJoin ? (
-        <>
-          <Join setIsJoin={setIsJoin} />
-        </>
+      {isLogin ? (
+        <Home userData={userData} getUserData={getUserData} logout={logout} />
       ) : (
-        <>
-          {isLogin ? (
-            <Home
-              userData={userData}
-              getUserData={getUserData}
-              logout={logout}
-            />
-          ) : (
-            <Login getUserData={getUserData} setIsJoin={setIsJoin} />
-          )}
-        </>
+        <Login getUserData={getUserData} />
       )}
     </div>
   );

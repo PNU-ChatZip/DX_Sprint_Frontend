@@ -1,6 +1,6 @@
 import GoogleIcon from "./assets/googleIcon/1x/btn_google_signin_light_normal_web.png";
 
-export default function Login({ getUserData, setIsJoin }) {
+export default function Login({ getUserData }) {
   return (
     <>
       <button
@@ -11,13 +11,6 @@ export default function Login({ getUserData, setIsJoin }) {
           });
         }}>
         <img src={GoogleIcon} />
-      </button>
-      <button>로그인</button>
-      <button
-        onClick={() => {
-          setIsJoin(true);
-        }}>
-        회원가입
       </button>
     </>
   );

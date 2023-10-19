@@ -15,7 +15,7 @@
     {
       "matches": ["https://www.youtube.com/*"],
       "js": ["contentscript.js"],
-      "css": ["root.css", "style.css"],
+      "css": ["root.css", "loader.css", "style.css"],
       "all_frames": false
     }
   ],

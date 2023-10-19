@@ -63,7 +63,17 @@ class InfoText {
   }
 }
 
+function fontSetting() {
+  let link = document.createElement("link");
+  link.rel = "stylesheet";
+  link.type = "text/css";
+  link.href =
+    "https://fonts.googleapis.com/css2?family=Montserrat&family=Noto+Sans&family=Noto+Sans+KR&display=swap";
+  document.head.appendChild(link);
+}
+
 window.onload = () => {
+  fontSetting();
   main();
 };
 
