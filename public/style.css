@@ -132,7 +132,17 @@
 }
 
 #script-view-body hr {
-  background-color: var(--color-white);
+  border: none;
+  border-top: 3px double var(--color-white);
+  color: var(--color-white);
+  overflow: visible;
+  margin-left: 10px;
+  height: 5px;
+  width: 95%;
+}
+
+#script-view-body hr::after {
+  background-color: var(--color-black);
 }
 
 .ytp-chapter-bar {
